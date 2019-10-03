@@ -1,0 +1,61 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+    commands:
+      - echo '前段階開始'
+      - npm install -g aws-cdk
+      - npm install -save @aws-cdk/core @aws-cdk/aws-lambda
+      - npm run build
+      - echo '前段階完了'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo '第一段階開始'
+      - yum install gcc gcc-c++ git patch
+      - rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
+      - yum install perl-App-cpanminus
+      - cpanm autodie
+      - mkdir ~/mecab-service
+      - echo '第一段階完了'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo '第二段階開始'
+      - curl -L "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE" -o mecab-0.996.tar.gz
+      - tar zxvf mecab-0.996.tar.gz
+      - cd mecab-0.996
+      - ./configure --prefix=$HOME/mecab-service/local --enable-utf8-only
+      - make
+      - make install
+      - echo '第二段階完了'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo '第三段階開始'
+      - cd ~
+      - curl -L "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" -o mecab-ipadic-2.7.0-20070801.tar.gz
+      - tar zxvf mecab-ipadic-2.7.0-20070801.tar.gz
+      - cd mecab-ipadic-2.7.0-20070801
+      - export PATH=$HOME/mecab-service/local/bin:$PATH
+      - export LD_LIBRARY_PATH=$HOME/mecab-service/local/lib:$LD_LIBRARY_PATH
+      - ./configure --prefix=$HOME/mecab-service/local --enable-utf8-only --with-charset=utf8
+      - make
+      - make install
+      - echo '第三段階完了'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo '第四段階開始'
+      - cd ~
+      - git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
+      - cd mecab-ipadic-neologd
+      - ./bin/install-mecab-ipadic-neologd -y -p $HOME/neologd -n --eliminate-redundant-entry
+      - echo '第四段階完了'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo '実行テスト'
+      - echo 東京スカイツリー | ~/mecab-service/local/bin/mecab -d ~/neologd
+      - echo 'テストOK！'
+      - echo '---------------------------------------------------------------------------------------''
+      - echo 'LambdaLayer'
+      - cp -r ~/neologd ~/layer/nodejs/neologd
+      - cd ~/layer/nodejs
+      - npm install child_process mecab-async fs 
+      - cd ../../
+      - cp -r ~/mecab-service/* ~/src/lambda
+      - cdk bootstrap
+      - cdk deploy --require-approval=never 

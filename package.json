@@ -1,8 +1,8 @@
 {
-  "name": "hello-cdk",
+  "name": "mecab-cdk",
   "version": "0.1.0",
   "bin": {
-    "hello-cdk": "bin/hello-cdk.js"
+    "mecab-cdk": "bin/mecab-cdk.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +20,11 @@
     "typescript": "~3.6.2"
   },
   "dependencies": {
-    "@aws-cdk/core": "^1.8.0",
+    "@aws-cdk/aws-apigateway": "^1.8.0",
+    "@aws-cdk/aws-dynamodb": "^1.8.0",
+    "@aws-cdk/aws-iam": "^1.8.0",
+    "@aws-cdk/aws-lambda": "^1.11.0",
+    "@aws-cdk/core": "^1.11.0",
     "source-map-support": "^0.5.9"
   }
 }
