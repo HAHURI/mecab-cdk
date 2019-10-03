@@ -9,7 +9,7 @@ export class MecabCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     const lambdaLayer = new lambda.LayerVersion(this,'LambdaLayer',{
-      code: lambda.Code.asset('layer')
+      code: lambda.Code.asset('layer'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_10_X]
     })
     
