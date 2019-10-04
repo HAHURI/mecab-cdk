@@ -47,7 +47,7 @@ phases:
       - which find
       - git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
       - cd mecab-ipadic-neologd
-      - ./bin/install-mecab-ipadic-neologd -y -p $HOME/neologd -n -a --ignore_adverb --ignore_interject --ignore_noun_ortho --ignore_noun_sahen_conn_ortho --ignore_adjective_std --ignore_adjective_verb --ignore_ill_formed_words
+      - ./bin/install-mecab-ipadic-neologd -y -p $HOME/neologd -n -a --eliminate-redundant-entry
       - echo '第四段階完了'
       - echo '---------------------------------------------------------------------------------------'
       - echo '実行テスト'
