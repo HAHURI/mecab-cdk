@@ -6,7 +6,7 @@ const mecab = new MeCab();
 mecab.command = '/var/task/lambda_neologd/local/bin/mecab -d /opt/neologd/';
 
 export async function handler(event: any): Promise<any> {
-    return MeCab.hello(event);
+    return MeCabLambda.hello(event);
 }
  
 export class MeCabLambda {

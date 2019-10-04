@@ -3,8 +3,6 @@ import cdk = require('@aws-cdk/core');
 import { Duration } from '@aws-cdk/core';
 
 export class MecabCdkStack extends cdk.Stack {
-  public readonly handler: lambda.Function;
-  public readonly version: string;
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
