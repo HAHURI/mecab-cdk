@@ -55,7 +55,7 @@ phases:
       - echo 'テストOK！'
       - echo '---------------------------------------------------------------------------------------'
       - echo 'LambdaLayer'
-      - cp -r ~/neologd $CODEBUILD_SRC_DIR/layer/nodejs/neologd
+      - zip -r $CODEBUILD_SRC_DIR/layer/nodejs/neologd.zip ~/neologd 
       - cd $CODEBUILD_SRC_DIR/layer/nodejs
       - npm install child_process mecab-async fs 
       - cd ../../
