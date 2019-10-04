@@ -12,7 +12,7 @@ phases:
       - echo '前段階完了'
       - echo '---------------------------------------------------------------------------------------'
       - echo '第一段階開始'
-      - yum install -y gcc gcc-c++ git patch
+      - yum install -y gcc gcc-c++ git patch which
       - rpm -ivh http://packages.groonga.org/centos/groonga-release-1.1.0-1.noarch.rpm
       - sed --in-place -e "s/\$releasever/7/g" /usr/share/doc/groonga-release-1.1.0/groonga.repo
       - sed --in-place -e "s/\$releasever/7/g" /etc/yum.repos.d/groonga.repo
