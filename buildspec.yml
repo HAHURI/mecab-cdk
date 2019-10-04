@@ -55,10 +55,10 @@ phases:
       - echo 'テストOK！'
       - echo '---------------------------------------------------------------------------------------'
       - echo 'LambdaLayer'
-      - cp -r ~/neologd ~/layer/nodejs/neologd
+      - cp -r ~/neologd $CODEBUILD_SRC_DIR/layer/nodejs/neologd
       - cd ~/layer/nodejs
       - npm install child_process mecab-async fs 
       - cd ../../
-      - cp -r ~/mecab-service/* ~/src/lambda
+      - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/lambda
       - cdk bootstrap
       - cdk deploy --require-approval=never 
