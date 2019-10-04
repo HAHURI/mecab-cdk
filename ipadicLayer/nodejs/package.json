@@ -1,5 +1,5 @@
 {
-    "name": "mecab-lambda-layer",
+    "name": "ipadic-layer",
     "version": "1.0.0",
     "dependencies": {
       "child_process":"^1.0.2",
