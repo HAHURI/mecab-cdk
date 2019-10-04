@@ -56,7 +56,7 @@ phases:
       - echo '---------------------------------------------------------------------------------------'
       - echo 'LambdaLayer'
       - zip -r $CODEBUILD_SRC_DIR/neologdLayer/nodejs/neologd.zip ~/neologd
-      - mv -r ~/mecab-service/local/lib/mecab/dic/ipadic $CODEBUILD_SRC_DIR/ipadicLayer/nodejs/ipadic
+      - mv ~/mecab-service/local/lib/mecab/dic/ipadic $CODEBUILD_SRC_DIR/ipadicLayer/nodejs/ipadic
       - cd $CODEBUILD_SRC_DIR/ipadicLayer/nodejs
       - npm install child_process mecab-async fs 
       - cd ../../
