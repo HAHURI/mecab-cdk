@@ -56,7 +56,7 @@ phases:
       - echo '---------------------------------------------------------------------------------------'
       - echo 'LambdaLayer'
       - cp -r ~/neologd $CODEBUILD_SRC_DIR/layer/nodejs/neologd
-      - cd ~/layer/nodejs
+      - cd $CODEBUILD_SRC_DIR/layer/nodejs
       - npm install child_process mecab-async fs 
       - cd ../../
       - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/lambda
