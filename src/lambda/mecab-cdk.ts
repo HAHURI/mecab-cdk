@@ -26,6 +26,6 @@ export class MeCabLambda {
     }    
 }
 
-function normalize(text) {
+function normalize(text:string) {
   return text.normalize("NFKC").toLowerCase();
 }
