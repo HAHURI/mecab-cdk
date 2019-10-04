@@ -44,7 +44,7 @@ phases:
       - echo '---------------------------------------------------------------------------------------'
       - echo '第四段階開始'
       - cd ~
-      - yum update -y find
+      - which find
       - git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git
       - cd mecab-ipadic-neologd
       - ./bin/install-mecab-ipadic-neologd -y -p $HOME/neologd -n -a
