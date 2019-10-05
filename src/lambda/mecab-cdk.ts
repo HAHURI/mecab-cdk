@@ -11,23 +11,23 @@ export async function handler(event: any): Promise<any> {
 export class MeCabLambda {
  
     public static async hello(event: any): Promise<any> {
-        try {
-            fs.accessSync('/tmp/root/neologd');
-        } catch(e) {
-            await new Promise((resolve, reject) => {
-                exec('unzip -d /tmp/ /opt/nodejs/neologd.zip', (err:any, stdout:any, stderr:any) => {
-                    if (err) {
-                        console.error(err);
-                        reject(err);
-                    }
-                    console.log(stdout);
-                    resolve(stdout);
-                });
-            });
-        }
         let dic = event.queryStringParameters.type? event.queryStringParameters.type: 'ipadic'
         if(dic==='neologd'){
             mecab.command = '/var/task/local/bin/mecab -d /tmp/root/neologd';
+            try {
+                fs.accessSync('/tmp/root/neologd');
+            } catch(e) {
+                await new Promise((resolve, reject) => {
+                    exec('unzip -d /tmp/ /opt/nodejs/neologd.zip', (err:any, stdout:any, stderr:any) => {
+                        if (err) {
+                            console.error(err);
+                            reject(err);
+                        }
+                        console.log(stdout);
+                        resolve(stdout);
+                    });
+                });
+            }
         }else{
             dic = 'ipadic'
             mecab.command = '/var/task/local/bin/mecab -d /opt/nodejs/ipadic';
