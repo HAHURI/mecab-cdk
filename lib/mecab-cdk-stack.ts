@@ -21,7 +21,8 @@ export class MecabCdkStack extends cdk.Stack {
         runtime: lambda.Runtime.NODEJS_8_10,
         timeout: Duration.seconds(180),
         environment: {
-            REGION: 'ap-northeast-1'
+            LD_LIBRARY_PATH: '/var/task/local/lib',
+            MECABRC: '/var/task/local/etc/mecabrc'
         },
         layers: [neologdLayer,ipadicLayer],
         memorySize: 256
