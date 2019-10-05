@@ -61,4 +61,4 @@ phases:
       - npm install child_process mecab-async fs 
       - cd ../../
       - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/lambda
-      - cdk deploy
+      - cdk deploy --require-approval=never 
