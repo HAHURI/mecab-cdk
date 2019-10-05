@@ -3,7 +3,6 @@ const exec = require('child_process').exec;
 const MeCab = require('mecab-async');
 const fs = require('fs');
 const mecab = new MeCab();
-mecab.command = '/var/task/lambda_neologd/local/bin/mecab -d /opt/neologd/';
 
 export async function handler(event: any): Promise<any> {
     return MeCabLambda.hello(event);
@@ -13,14 +12,26 @@ export class MeCabLambda {
  
     public static async hello(event: any): Promise<any> {
         try {
-            fs.accessSync('/tmp/neologd');
-        } catch(e) {
-            console.log("ダメっぽい")
-        }
-        const res = mecab.parseSync(normalize("僕の名前はラルセイです。"));
+            fs.accessSync('/tmp/root/neologd');
+          } catch(e) {
+            await new Promise((resolve, reject) => {
+              exec('unzip -d /tmp/ /opt/nodejs/neologd.zip', (err:any, stdout:any, stderr:any) => {
+                if (err) {
+                  console.error(err);
+                  reject(err);
+                }
+                console.log(stdout);
+                resolve(stdout);
+              });
+            });
+          }
+        mecab.command = '/var/task/local/bin/mecab -d /opt/nodejs/ipadic';
+        const ipadicres = mecab.parseSync(normalize("初音ミクさんと東方Projectをうまく認識できないipadicは雑魚。"));
+        mecab.command = '/var/task/local/bin/mecab -d /tmp/root/neologd';
+        const neologdres = mecab.parseSync(normalize("初音ミクさんと東方Projectをうまく認識できないipadicは雑魚。"));
         const response = {
             statusCode: 200,
-            body: JSON.stringify(['Hello', res])
+            body: JSON.stringify({'ipadic': ipadicres,'neologd':neologdres})
         };
         return response;
     }    

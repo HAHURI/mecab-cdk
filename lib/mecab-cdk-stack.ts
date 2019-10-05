@@ -8,17 +8,17 @@ export class MecabCdkStack extends cdk.Stack {
 
     const neologdLayer = new lambda.LayerVersion(this,'NeologdLayer',{
       code: lambda.Code.asset('neologdLayer'),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_10_X]
+      compatibleRuntimes: [lambda.Runtime.NODEJS_8_10]
     })
     const ipadicLayer = new lambda.LayerVersion(this,'IpadicLayer',{
       code: lambda.Code.asset('ipadicLayer'),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_10_X]
+      compatibleRuntimes: [lambda.Runtime.NODEJS_8_10]
     })
     
     const MecabLambda = new lambda.Function(this, 'MecabLambda', {
         code: lambda.Code.asset('src/lambda'),
         handler: 'mecab-cdk.handler',
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_8_10,
         timeout: Duration.seconds(180),
         environment: {
             REGION: 'ap-northeast-1'
