@@ -7,7 +7,7 @@ phases:
     commands:
       - echo '前段階開始'
       - npm install -g aws-cdk
-      - npm install -save @aws-cdk/core @aws-cdk/aws-lambda
+      - npm install -save @aws-cdk/core @aws-cdk/aws-lambda @aws-cdk/aws-apigateway
       - npm run build
       - echo '前段階完了'
       - echo '---------------------------------------------------------------------------------------'
@@ -61,5 +61,4 @@ phases:
       - npm install child_process mecab-async fs 
       - cd ../../
       - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/lambda
-      - cdk bootstrap
-      - cdk deploy --require-approval=never 
+      - cdk deploy

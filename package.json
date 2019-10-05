@@ -21,8 +21,6 @@
   },
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.8.0",
-    "@aws-cdk/aws-dynamodb": "^1.8.0",
-    "@aws-cdk/aws-iam": "^1.8.0",
     "@aws-cdk/aws-lambda": "^1.11.0",
     "@aws-cdk/core": "^1.11.0",
     "source-map-support": "^0.5.9"
