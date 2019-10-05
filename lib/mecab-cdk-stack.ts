@@ -46,6 +46,7 @@ export class MecabCdkStack extends cdk.Stack {
     const getResouse: Resource = restApi.root.addResource("get")
     // メソッドの作成
     getResouse.addMethod("GET", integration)
+    getResouse.addMethod("POST", integration)
     // CORS対策でOPTIONSメソッドを作成
     getResouse.addMethod("OPTIONS", new MockIntegration({
       integrationResponses: [{

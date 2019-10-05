@@ -13,25 +13,30 @@ export class MeCabLambda {
     public static async hello(event: any): Promise<any> {
         try {
             fs.accessSync('/tmp/root/neologd');
-          } catch(e) {
+        } catch(e) {
             await new Promise((resolve, reject) => {
-              exec('unzip -d /tmp/ /opt/nodejs/neologd.zip', (err:any, stdout:any, stderr:any) => {
-                if (err) {
-                  console.error(err);
-                  reject(err);
-                }
-                console.log(stdout);
-                resolve(stdout);
-              });
+                exec('unzip -d /tmp/ /opt/nodejs/neologd.zip', (err:any, stdout:any, stderr:any) => {
+                    if (err) {
+                        console.error(err);
+                        reject(err);
+                    }
+                    console.log(stdout);
+                    resolve(stdout);
+                });
             });
-          }
-        mecab.command = '/var/task/local/bin/mecab -d /opt/nodejs/ipadic';
-        const ipadicres = mecab.parseSync(normalize("初音ミクさんと東方Projectをうまく認識できないipadicは雑魚。"));
-        mecab.command = '/var/task/local/bin/mecab -d /tmp/root/neologd';
-        const neologdres = mecab.parseSync(normalize("初音ミクさんと東方Projectをうまく認識できないipadicは雑魚。"));
+        }
+        let dic = event.queryStringParameters.type? event.queryStringParameters.type: 'ipadic'
+        if(dic==='neologd'){
+            mecab.command = '/var/task/local/bin/mecab -d /tmp/root/neologd';
+        }else{
+            dic = 'ipadic'
+            mecab.command = '/var/task/local/bin/mecab -d /opt/nodejs/ipadic';
+        }
+        let text = event.queryStringParameters.text? event.queryStringParameters.text: 'これはテストだよ！queryにtype="ipadic/neologd"を指定して、text="(形態素解析したい文字列)"を入れてGETで叩いてね。'
+        const res = mecab.parseSync(normalize(text));
         const response = {
             statusCode: 200,
-            body: JSON.stringify({'ipadic': ipadicres,'neologd':neologdres})
+            body: JSON.stringify({'response':res, type:dic, text:text})
         };
         return response;
     }    
