@@ -36,7 +36,7 @@ export class MeCabLambda {
         const res = mecab.parseSync(normalize(text));
         const response = {
             statusCode: 200,
-            body: JSON.stringify({'response':res, type:dic, text:text})
+            body: JSON.stringify({type:dic, 'response':res, text:text})
         };
         return response;
     }    

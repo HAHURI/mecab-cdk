@@ -17,9 +17,13 @@ export class MecabCdkStack extends cdk.Stack {
       code: lambda.Code.asset('ipadicLayer'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_8_10]
     })
-    
+    const vcasAnalyzeLayer = new lambda.LayerVersion(this,'VcasAnalyzeLayer',{
+      code: lambda.Code.asset('vcasAnalyzeLayer'),
+      compatibleRuntimes: [lambda.Runtime.NODEJS_10_X]
+    })
+
     const MecabLambda = new lambda.Function(this, 'MecabLambda', {
-        code: lambda.Code.asset('src/lambda'),
+        code: lambda.Code.asset('src/mecabLambda'),
         handler: 'mecab-cdk.handler',
         runtime: lambda.Runtime.NODEJS_8_10,
         timeout: Duration.seconds(180),
@@ -34,6 +38,15 @@ export class MecabCdkStack extends cdk.Stack {
       lambda: MecabLambda,
       description: 'メモ'
     })
+
+    const VcasAnalyzeLambda = new lambda.Function(this, 'VcasAnalyzeLambda', {
+      code: lambda.Code.asset('src/vcasAnalyzeLambda'),
+      handler: 'vcas-analyse-cdk.handler',
+      runtime: lambda.Runtime.NODEJS_10_X,
+      timeout: Duration.seconds(180),
+      layers: [vcasAnalyzeLayer],
+      memorySize: 256
+  });
 
     // API Gateway 作成
     const restApi: RestApi = new RestApi(this, "MecabAPI", {
