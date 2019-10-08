@@ -6,8 +6,24 @@ const driver = neo4j.driver(process.env.NEO4J_URL,neo4j.auth.basic(process.env.U
 
 // type
 export type HttpMethodEnum = 'GET'|'POST'
-
+export type platformEnum = 'nicolive' | 'youtubelive' | 'twitcasting' | 'twitch' | 'showroom';
 // interface
+export interface Live { 
+    id: number,
+    title: string,
+    description: string,
+    thumbnail: string,
+    url: string,
+    platform: platformEnum,
+    viewers: number,
+    uniqueViewers: number,
+    comments: number,
+    nickname: string,
+    studioMetadata: string,
+    startedAt: number,
+    endedAt: number,
+    createdAt: number
+}
 export interface HttpOptions { 
     method: HttpMethodEnum,
     uri: string,
@@ -26,7 +42,7 @@ export class VcasAnalyzeLambda {
     public static async hello(event: any): Promise<any> {
         // 想定するリクエスト
         var session = driver.session();        
-        let liveList = await getApiResponse(createApiOptions('GET', 'https://api.virtualcast.jp/channels/ja/archive/list?count=20&offsetId='+event.queryStringParameters.offsetId, 60));
+        let liveList:{list:Live[]} = await getApiResponse(createApiOptions('GET', 'https://api.virtualcast.jp/channels/ja/archive/list?count=20&offsetId='+event.queryStringParameters.offsetId, 6000));
         for(let i =0; i<liveList.list.length; i++){
             console.log(liveList.list[i])
             var readTxResultPromise = await session.readTransaction(function (transaction:any) {
@@ -36,10 +52,13 @@ export class VcasAnalyzeLambda {
             console.log(readTxResultPromise.records.length)
             if (readTxResultPromise.records.length === 0) {
                 if (liveList.list[i].url.match(/nicovideo/)) {
-                    let niconama = getResponse(createApiOptions('GET', 'http://namagome.com/come_dl.cgi/' + liveList.list[i].url.split('/')[-1] + '/xml', 60));
-                    console.log(niconama);
-                    console.log(parser.toJson(niconama));
-                    return '';
+                    let niconama = await getResponse(createApiOptions('GET', 'http://namagome.com/come_dl.cgi/' + liveList.list[i].url.split('/')[4].replace(/[^0-9]/g, '') + '/xml', 6000));
+                    let niconamaJson = JSON.parse(parser.toJson(niconama))
+                    if (typeof niconamaJson.NiconamaComment.LiveInfo.LiveTitle === 'string'){
+                        console.log(niconamaJson)
+                    }else{
+                        console.log('コメデータはなかったのです')
+                    }
                 }else {
                     console.log('ニコ生以外です')
                 }
@@ -99,3 +118,4 @@ export function getApiResponse(options:HttpOptions): any{
         }); 
     })
 }
+
