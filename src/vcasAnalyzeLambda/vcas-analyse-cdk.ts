@@ -25,24 +25,26 @@ export class VcasAnalyzeLambda {
  
     public static async hello(event: any): Promise<any> {
         // 想定するリクエスト
-        let offsetId = event.queryStringParameters.offsetId
-        // neo4jに登録があるかを確認する
-        var session = driver.session()
-        var readTxResultPromise = session.readTransaction(function(transaction:any) {
-            var result = transaction.run(
-              'MATCH (live:Live { id:'+offsetId+'}) RETURN live'
-            )
-            return result
-        })
-        readTxResultPromise
-        .then(function(result:any) {
-            session.close()
-            console.log(result.records)
-            return result;
-        })
-        .catch(function(error:any) {
-            console.log(error)
-            return error;
+        var session = driver.session();        
+        let liveList = getApiResponse(createApiOptions('GET','https://api.virtualcast.jp/channels/ja/archive/list',60,undefined,{count:'20',offsetId:event.queryStringParameters.offsetId}))
+        let res = liveList.list.forEach(async function(live:any){
+            // neo4jに登録があるかを確認する
+            var readTxResultPromise = await session.readTransaction(function (transaction:any) {
+                var result = transaction.run('MATCH (live:Live { liveId:"' + live.id + '"}) RETURN live');
+                return result;
+            });
+            if(readTxResultPromise.records.length===0){
+                if(live.url.match(/nicovideo/)){
+                    let niconama = getResponse(createApiOptions('GET','http://namagome.com/come_dl.cgi/'+live.url.split('/')[-1]+'/xml',60))
+                    console.log(niconama)
+                    console.log(parser.toJson(niconama))
+                    return ''
+                } else {
+                    return ''
+                }    
+            }else{
+                return 'すでに登録済みです'
+            }
         })
         // 生米保管庫からXMLを取得する
         // mecabでテキストデータを解析する
@@ -70,6 +72,18 @@ export function createApiOptions(
       qs: qs,
       headers: headers
     }
+}
+export function getResponse(options:HttpOptions): any{
+    return new Promise((resolve, reject) => {
+        requestPromise(options)
+        .then((response:any) => {
+            resolve(response)
+        })
+        .catch((error: any) => {
+            console.log(error)
+            reject(error);
+        }); 
+    })
 }
 
 export function getApiResponse(options:HttpOptions): any{
