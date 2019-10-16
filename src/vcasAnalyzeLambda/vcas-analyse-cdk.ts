@@ -49,9 +49,43 @@ export class VcasAnalyzeLambda {
                 var result = transaction.run('MATCH (live:Live { liveId:"' + liveList.list[i].id + '"}) RETURN live');
                 return result;
             });
+            /**
+             * <User> --Broadcast--→ <Live> ←--CommentCount-- <User>
+             * <User> --Count--→ <Word> --Count--→ <Live> ←--Broadcast-- <User>
+             * <Comment> --typology-- <Comment> 
+             * <Word> --typology-- <Word> 
+             */
             console.log(readTxResultPromise.records.length)
             if (readTxResultPromise.records.length === 0) {
-                if (liveList.list[i].url.match(/nicovideo/)) {
+                /** live
+                 * id,title,description,thumbnail,url,platform,viewers,uniqueViewers,comments,nickname,studioMetadata,startedAt,endedAt,createdAt
+                */
+                let livedata = liveList.list[i]
+                session.run('CREATE (live:Live { id: '+livedata.id
+                    +',title: '+livedata.title
+                    +',description: '+livedata.description
+                    +',thumbnail: '+livedata.thumbnail
+                    +',url: '+livedata.url
+                    +',platform: '+livedata.platform
+                    +',nickname: '+livedata.nickname
+                    +',studioMetadata: '+livedata.studioMetadata
+                    +',viewers: {viewersParam},uniqueViewers: {uniqueViewersParam},comments: {commentsParam},startedAt: {startedAtParam},endedAt: {endedAtParam},createdAt: {createdAtParam}})',
+                    { 
+                        viewersParam: neo4j.int(livedata.viewers),
+                        uniqueViewersParam: neo4j.int(livedata.uniqueViewers),
+                        commentsParam: neo4j.int(livedata.comments),
+                        startedAtParam: neo4j.date(livedata.startedAt*1000),
+                        endedAtParam: neo4j.date(livedata.endedAt*1000),
+                        createdAtParam: neo4j.date(livedata.createdAt*1000)
+                    }
+                )
+                /*if (liveList.list[i].url.match(/nicovideo/)) {
+                    /** user,lived,comment,word
+                     * NiconamaComment.PlayerStatus.Stream
+                     *      OwnerId,OwnerName,DefaultCommunity
+                     * NiconamaComment.LiveCommentDataArray.chat[]
+                     *      anonymity,date,mail,no,thread,user_id,vpos,locale,$t
+                    *
                     let niconama = await getResponse(createApiOptions('GET', 'http://namagome.com/come_dl.cgi/' + liveList.list[i].url.split('/')[4].replace(/[^0-9]/g, '') + '/xml', 6000));
                     let niconamaJson = JSON.parse(parser.toJson(niconama))
                     if (typeof niconamaJson.NiconamaComment.LiveInfo.LiveTitle === 'string'){
@@ -61,7 +95,7 @@ export class VcasAnalyzeLambda {
                     }
                 }else {
                     console.log('ニコ生以外です')
-                }
+                }*/
             } else {
                 console.log('すでに登録済みです')
             }
