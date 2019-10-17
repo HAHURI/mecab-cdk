@@ -24,6 +24,17 @@ export interface Live {
     endedAt: number,
     createdAt: number
 }
+export interface Chat{
+    anonymity: number,
+    date: number,
+    mail: number,
+    no: number,
+    thread: number,
+    user_id: string,
+    vpos: number,
+    locale: string,
+    $t: string
+}
 export interface HttpOptions { 
     method: HttpMethodEnum,
     uri: string,
@@ -78,8 +89,9 @@ export class VcasAnalyzeLambda {
                     }
                 )
             }
+            // titleとdescriptionをmecabに投げるならここ
 
-            // User
+            // User,Edge
             const result = await when(livedata.platform)
                 .on(v => v === 'nicolive', async () => await nicoliveFnc(livedata))
                 .on(v => v === 'youtubelive', async () => await youtubeliveFnc(livedata))
@@ -215,9 +227,26 @@ export async function nicoliveFnc(livedata:Live):Promise<string>{
             return result;
         });
         if (Neo4jUserLiveEdge.records.length === 0) {
-            await session.run('MATCH (user:User { ownerId: "'+ ownerId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
+            await session.run('MATCH (user:User { ownerId: "'+ ownerId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast{DefaultCommunity:'+niconamaJson.NiconamaComment.PlayerStatus.Stream.DefaultCommunity+'}]->(live)')
         }
         // TODO: コメントデータ解析
+        let comments:{ [key:string]: any; } = {}
+        for(let i=0; niconamaJson.NiconamaComment.LiveCommentDataArray.chat.length; i++){
+            let chat:Chat = niconamaJson.NiconamaComment.LiveCommentDataArray.chat[i]
+            if (comments[chat.user_id]) {
+                comments[chat.user_id].push(chat)
+            }else{
+                comments[chat.user_id] = new Array()
+                comments[chat.user_id].push(chat)
+            }
+            // mecabに投げるならここ
+        }
+        Object.keys(comments).forEach(function (key) {
+            // Userを確認。存在しなかったらnodeを追加。特殊ユーザや匿名はわかるようにしておく。comments[key]
+
+            // Commentのedgeを追加。数値：コメント数。文字数。平均文字数。
+
+        });
         console.log('nicolive(コメントあり) id:'+livedata.id+'の処理が完了しました！')
         return '処理が完了しました！'
     }else{
