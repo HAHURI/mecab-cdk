@@ -81,12 +81,12 @@ export class VcasAnalyzeLambda {
 
             // User
             const result = when(livedata.platform)
-                .on(v => v === 'nicolive', () => nicoliveFnc(livedata))
-                .on(v => v === 'youtubelive', () => youtubeliveFnc(livedata))
-                .on(v => v === 'twitcasting', () => twitcastingFnc(livedata))
-                .on(v => v === 'twitch', () => twitchFnc(livedata))
-                .on(v => v === 'showroom', () => otherFnc(livedata))
-                .otherwise(() => otherFnc(livedata))
+                .on(v => v === 'nicolive', async () => await nicoliveFnc(livedata))
+                .on(v => v === 'youtubelive', async () => await youtubeliveFnc(livedata))
+                .on(v => v === 'twitcasting', async () => await twitcastingFnc(livedata))
+                .on(v => v === 'twitch', async () => await twitchFnc(livedata))
+                .on(v => v === 'showroom', async () => await otherFnc(livedata))
+                .otherwise(async () => await otherFnc(livedata))
             console.log(result)
         }
     }    
