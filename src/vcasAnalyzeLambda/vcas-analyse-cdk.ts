@@ -80,7 +80,7 @@ export class VcasAnalyzeLambda {
             }
 
             // User
-            const result = when(livedata.platform)
+            const result = await when(livedata.platform)
                 .on(v => v === 'nicolive', async () => await nicoliveFnc(livedata))
                 .on(v => v === 'youtubelive', async () => await youtubeliveFnc(livedata))
                 .on(v => v === 'twitcasting', async () => await twitcastingFnc(livedata))
@@ -112,7 +112,7 @@ export async function youtubeliveFnc(livedata:Live):Promise<string>{
     if (Neo4jUserLiveEdge.records.length === 0) {
         await session.run('MATCH (user:User { channelId: "'+ channelId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
     }
-    console.log('youtubeliveの処理が完了しました！')
+    console.log('youtubelive id:'+livedata.id+'の処理が完了しました！')
     return '処理が完了しました！'
 }
 // twitcasting: URLからユーザの判定が可能：ニックネームとtwitcastingのID
@@ -135,7 +135,7 @@ export async function twitcastingFnc(livedata:Live):Promise<string>{
     if (Neo4jUserLiveEdge.records.length === 0) {
         await session.run('MATCH (user:User { twitcastingId: "'+ twitcastingId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
     }
-    console.log('twitcastingの処理が完了しました！')
+    console.log('twitcasting id:'+livedata.id+'の処理が完了しました！')
     return '処理が完了しました！'
 }
 // twitch: URLからユーザの判定が可能：ニックネームとtwitchのID
@@ -158,7 +158,7 @@ export async function twitchFnc(livedata:Live):Promise<string>{
     if (Neo4jUserLiveEdge.records.length === 0) {
         await session.run('MATCH (user:User { twitchId: "'+ twitchId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
     }
-    console.log('twitchの処理が完了しました！')
+    console.log('twitch id:'+livedata.id+'の処理が完了しました！')
     return '処理が完了しました！'
 }
 // showroom: URLからユーザの判定はできない：ニックネームのみ
@@ -180,7 +180,7 @@ export async function otherFnc(livedata:Live):Promise<string>{
     if (Neo4jUserLiveEdge.records.length === 0) {
         await session.run('MATCH (user:User { liveId: "'+ livedata.id +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
     }
-    console.log('showroomの処理が完了しました！')
+    console.log('showroom id:'+livedata.id+'の処理が完了しました！')
     return '処理が完了しました！'
 }
 // nicolive: URLからユーザ判定できない：次の取得ができなかったらニックネームのみ、できたらニックネームと情報
@@ -218,7 +218,7 @@ export async function nicoliveFnc(livedata:Live):Promise<string>{
             await session.run('MATCH (user:User { ownerId: "'+ ownerId +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
         }
         // TODO: コメントデータ解析
-        console.log('nicolive(コメントあり)の処理が完了しました！')
+        console.log('nicolive(コメントあり) id:'+livedata.id+'の処理が完了しました！')
         return '処理が完了しました！'
     }else{
         // node(User)
@@ -237,7 +237,7 @@ export async function nicoliveFnc(livedata:Live):Promise<string>{
         if (Neo4jUserLiveEdge.records.length === 0) {
             await session.run('MATCH (user:User { liveId: "'+ livedata.id +'"}) , (live:Live { id:' + livedata.id + '}) CREATE (user)-[:Broadcast]->(live)')
         }
-        console.log('nicolive(コメントなし)の処理が完了しました！')
+        console.log('nicolive(コメントなし) id:'+livedata.id+'の処理が完了しました！')
         return '処理が完了しました！'
     }
 }

@@ -62,5 +62,5 @@ phases:
       - cd $CODEBUILD_SRC_DIR/vcasAnalyzeLayer/nodejs
       - npm install neo4j-driver request request-promise xml2json
       - cd ../../
-      - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/lambda
+      - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/mecabLambda
       - cdk deploy --require-approval=never 
