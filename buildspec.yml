@@ -59,8 +59,6 @@ phases:
       - mv ~/mecab-service/local/lib/mecab/dic/ipadic $CODEBUILD_SRC_DIR/ipadicLayer/nodejs/ipadic
       - cd $CODEBUILD_SRC_DIR/ipadicLayer/nodejs
       - npm install child_process mecab-async fs 
-      - cd $CODEBUILD_SRC_DIR/vcasAnalyzeLayer/nodejs
-      - npm install neo4j-driver request request-promise xml2json
       - cd ../../
       - cp -r ~/mecab-service/* $CODEBUILD_SRC_DIR/src/mecabLambda
       - cdk deploy --require-approval=never 
