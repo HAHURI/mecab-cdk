@@ -3,6 +3,7 @@ const neo4j = require('neo4j-driver').v1
 const requestPromise = require('request-promise');
 const parser = require('xml2json');
 const driver = neo4j.driver(process.env.NEO4J_URL,neo4j.auth.basic(process.env.USER_NAME, process.env.USER_PASSWORD))
+const mecabUrl = process.env.MecabUrl ? process.env.MecabUrl : ''
 
 // type
 export type HttpMethodEnum = 'GET'|'POST'
@@ -55,7 +56,7 @@ export class VcasAnalyzeLambda {
         var session = driver.session();        
         let liveList:{list:Live[]} = await getApiResponse(createApiOptions('GET', 'https://api.virtualcast.jp/channels/ja/archive/list?count=20&offsetId='+event.queryStringParameters.offsetId, 6000));
         /**
-         * <User> --Broadcast--→ <Live> ←--CommentCount-- <User>
+         * <User> --Broadcast--→ <Live> ←--Comment:Count-- <User>
          * <User> --Count--→ <Word> --Count--→ <Live> ←--Broadcast-- <User>
          * <Comment> --typology-- <Comment> 
          * <Word> --typology-- <Word> 
@@ -90,6 +91,14 @@ export class VcasAnalyzeLambda {
                 )
             }
             // titleとdescriptionをmecabに投げるならここ
+            let wordAnalyze = await getApiResponse(createApiOptions(
+                'POST',
+                mecabUrl,
+                6000,
+                { type: 'neologd', words: [livedata.title,livedata.description] }
+            ));
+            console.log(wordAnalyze)
+
 
             // User,Edge
             const result = await when(livedata.platform)
