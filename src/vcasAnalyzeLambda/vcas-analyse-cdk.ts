@@ -91,15 +91,23 @@ export class VcasAnalyzeLambda {
                 )
             }
             // titleとdescriptionをmecabに投げるならここ
-            let wordAnalyze = await getApiResponse(createApiOptions(
+            let wordAnalyze = await getApiJsonResponse(createApiOptions(
                 'POST',
                 mecabUrl,
-                6000,
+                600000,
                 { type: 'neologd', words: [livedata.title,livedata.description] }
             ));
             console.log(wordAnalyze)
-
-
+            if(JSON.parse(wordAnalyze).statusCode==='504'){
+                wordAnalyze = await getApiJsonResponse(createApiOptions(
+                    'POST',
+                    mecabUrl,
+                    600000,
+                    { type: 'neologd', words: [livedata.title,livedata.description] }
+                ));
+            }
+            console.log(wordAnalyze)
+            
             // User,Edge
             const result = await when(livedata.platform)
                 .on(v => v === 'nicolive', async () => await nicoliveFnc(livedata))
@@ -325,6 +333,19 @@ export function getApiResponse(options:HttpOptions): any{
     })
 }
 
+export function getApiJsonResponse(options:any): any{
+    options.json = true
+    return new Promise((resolve, reject) => {
+        requestPromise(options)
+        .then((response:any) => {
+            resolve(response)
+        })
+        .catch((error: any) => {
+            console.log(error)
+            reject(error);
+        }); 
+    })
+}
 
 type ChainedWhen<T, R> = {
     on: <A>(pred: (v: T) => boolean, fn: () => A) => ChainedWhen<T, R | A>;
